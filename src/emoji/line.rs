@@ -117,7 +117,7 @@ impl Line {
         // for Y-axis
         let offset_y = (self.line_height - self.spec.bounds.height()) / 2.0;
 
-        SkTextUtils::draw_str(canvas, &self.text, Point::new(x, y - self.spec.bounds.top + offset_y), &font, &paint, self.text_align);
+        SkTextUtils::draw_str(canvas, &self.text, Point::new(x, y - self.spec.bounds.top + offset_y), &font, &paint, SkTextAlign::Left);
     }
 
     // MeasureSpec
