@@ -2,7 +2,7 @@
 
 mod emoji;
 use emoji::generate as emojirs;
-use napi::bindgen_prelude::Buffer;
+use napi::{bindgen_prelude::Buffer, Error};
 
 #[macro_use]
 extern crate napi_derive;
@@ -25,7 +25,7 @@ pub struct EmojiOptions {
 }
 
 #[napi]
-pub fn generate(text: String, options: Option<EmojiOptions>) -> Buffer {
+pub fn generate(text: String, options: Option<EmojiOptions>) -> Result<Buffer, Error> {
     let mut emoji = emojirs::new();
     emoji.set_texts(text);
 
@@ -37,13 +37,22 @@ pub fn generate(text: String, options: Option<EmojiOptions>) -> Buffer {
             emoji.set_height(height);
         }
         if let Some(color) = options.color {
-            emoji.set_color(color);
+            let result = emoji.set_color(color);
+            if result.is_err() {
+                return Err(Error::from_reason(result.unwrap_err()));
+            }
         }
         if let Some(background_color) = options.background_color {
-            emoji.set_background_color(background_color);
+            let result = emoji.set_background_color(background_color);
+            if result.is_err() {
+                return Err(Error::from_reason(result.unwrap_err()));
+            }
         }
         if let Some(text_align) = options.text_align {
-            emoji.set_text_align_by_string(text_align);
+            let result = emoji.set_text_align_by_string(text_align);
+            if result.is_err() {
+                return Err(Error::from_reason(result.unwrap_err()));
+            }
         }
         if let Some(text_size_fixed) = options.text_size_fixed {
             emoji.set_text_size_fixed(text_size_fixed);
@@ -58,12 +67,15 @@ pub fn generate(text: String, options: Option<EmojiOptions>) -> Buffer {
             emoji.set_typeface_name(typeface_name);
         }
         if let Some(format) = options.format {
-            emoji.set_format_by_string(format);
+            let result = emoji.set_format_by_string(format);
+            if result.is_err() {
+                return Err(Error::from_reason(result.unwrap_err()));
+            }
         }
         if let Some(quality) = options.quality {
             emoji.set_quality(quality);
         }
     }
     
-    return Buffer::from(emoji.generate().as_bytes())
+    return Ok(Buffer::from(emoji.generate().as_bytes()));
 }

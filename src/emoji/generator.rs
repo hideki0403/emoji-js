@@ -54,20 +54,35 @@ impl Generator {
         self.height = height as f32;
     }
 
-    pub fn set_color(&mut self, color: String) {
-        self.color = utils::parse_color_code(color);
+    pub fn set_color(&mut self, color: String) -> Result<(), String> {
+        let result = utils::parse_color_code(color);
+        if result.is_err() {
+            return Err(result.unwrap_err());
+        }
+        self.color = result.unwrap();
+        return Ok(());
     }
 
-    pub fn set_background_color(&mut self, background_color: String) {
-        self.background_color = utils::parse_color_code(background_color);
+    pub fn set_background_color(&mut self, background_color: String) -> Result<(), String> {
+        let result = utils::parse_color_code(background_color);
+        if result.is_err() {
+            return Err(result.unwrap_err());
+        }
+        self.background_color = result.unwrap();
+        return Ok(());
     }
 
     pub fn set_text_align(&mut self, text_align: SkTextAlign) {
         self.text_align = text_align;
     }
 
-    pub fn set_text_align_by_string(&mut self, text_align: String) {
-        self.text_align = utils::parse_text_align(text_align);
+    pub fn set_text_align_by_string(&mut self, text_align: String) -> Result<(), String> {
+        let result = utils::parse_text_align(text_align);
+        if result.is_err() {
+            return Err(result.unwrap_err());
+        }
+        self.text_align = result.unwrap();
+        return Ok(());
     }
 
     pub fn set_text_size_fixed(&mut self, text_size_fixed: bool) {
@@ -111,8 +126,13 @@ impl Generator {
         self.format = format;
     }
 
-    pub fn set_format_by_string(&mut self, format: String) {
-        self.format = utils::parse_image_format(format);
+    pub fn set_format_by_string(&mut self, format: String) -> Result<(), String> {
+        let result = utils::parse_image_format(format);
+        if result.is_err() {
+            return Err(result.unwrap_err());
+        }
+        self.format = result.unwrap();
+        return Ok(());
     }
 
     pub fn set_quality(&mut self, quality: u32) {
