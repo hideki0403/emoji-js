@@ -15,6 +15,7 @@ pub struct Generator {
     texts: Vec<String>,
     width: f32,
     height: f32,
+    flexible_width: bool,
     color: SkColor,
     background_color: SkColor,
     text_align: SkTextAlign,
@@ -31,6 +32,7 @@ impl Generator {
             texts: Vec::new(),
             width: 128.0,
             height: 128.0,
+            flexible_width: false,
             color: SkColor::BLACK,
             background_color: SkColor::TRANSPARENT,
             text_align: SkTextAlign::Center,
@@ -52,6 +54,10 @@ impl Generator {
 
     pub fn set_height(&mut self, height: u32) {
         self.height = height as f32;
+    }
+
+    pub fn set_flexible_width(&mut self, flexible_width: bool) {
+        self.flexible_width = flexible_width;
     }
 
     pub fn set_color(&mut self, color: String) -> Result<(), String> {
@@ -139,11 +145,7 @@ impl Generator {
         self.quality = quality;
     }
 
-    pub fn generate(&self) -> SkData {
-        let mut surface = SkSurfaces::raster_n32_premul(ISize::new(self.width as i32, self.height as i32)).unwrap();
-        let mut canvas = surface.canvas();
-        canvas.clear(self.background_color);
-
+    pub fn generate(&mut self) -> SkData {
         let line_height = self.height / self.texts.len() as f32;
 
         // 行ボックスを作成
@@ -164,6 +166,17 @@ impl Generator {
             lines.push(line);
         }
 
+        // フレキシブルモード: 最大widthで再計算
+        if self.flexible_width {
+            let max_width = lines.iter().map(|line| line.get_raw_bounds_width()).max_by(|a, b| a.partial_cmp(b).unwrap()).unwrap();
+            self.width = max_width;
+            
+            for line in &mut lines {
+                line.set_width(max_width);
+                line.measure(None);
+            }
+        }
+
         // サイズ固定モード: 最小テキストサイズで再計算
         if self.text_size_fixed && lines.len() > 1 {
             let min_text_size = lines.iter().map(|line| line.get_text_size()).min_by(|a, b| a.partial_cmp(b).unwrap()).unwrap();
@@ -171,6 +184,10 @@ impl Generator {
                 line.measure(Some(min_text_size));
             }
         }
+
+        let mut surface = SkSurfaces::raster_n32_premul(ISize::new(self.width as i32, self.height as i32)).unwrap();
+        let mut canvas = surface.canvas();
+        canvas.clear(self.background_color);
 
         // テキストを描画
         for (i, line) in lines.iter_mut().enumerate() {

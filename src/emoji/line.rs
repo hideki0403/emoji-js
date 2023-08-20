@@ -261,4 +261,13 @@ impl Line {
     pub fn get_text_size(&self) -> SkScalar {
         return self.spec.text_size;
     }
+
+    pub fn get_raw_bounds_width(&self) -> SkScalar {
+        let paint = self.prepare_paint_for_measure();
+        let mut font = self.prepare_font_for_measure();
+        font.set_size(self.spec.text_size);
+        let bounds = font.measure_text(self.text.as_bytes(), SkTextEncoding::UTF8, Some(&paint)).1;
+
+        return bounds.width();
+    }
 }

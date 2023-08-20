@@ -11,6 +11,7 @@ extern crate napi_derive;
 pub struct EmojiOptions {
     pub width: Option<u32>,
     pub height: Option<u32>,
+    pub flexible_width: Option<bool>,
     pub color: Option<String>,
     pub background_color: Option<String>,
     #[napi(ts_type = "'left' | 'center' | 'right'")]
@@ -33,45 +34,59 @@ pub fn generate(text: String, options: Option<EmojiOptions>) -> Result<Buffer, E
         if let Some(width) = options.width {
             emoji.set_width(width);
         }
+        
         if let Some(height) = options.height {
             emoji.set_height(height);
         }
+        
+        if let Some(flexible_width) = options.flexible_width {
+            emoji.set_flexible_width(flexible_width);
+        }
+
         if let Some(color) = options.color {
             let result = emoji.set_color(color);
             if result.is_err() {
                 return Err(Error::from_reason(result.unwrap_err()));
             }
         }
+
         if let Some(background_color) = options.background_color {
             let result = emoji.set_background_color(background_color);
             if result.is_err() {
                 return Err(Error::from_reason(result.unwrap_err()));
             }
         }
+
         if let Some(text_align) = options.text_align {
             let result = emoji.set_text_align_by_string(text_align);
             if result.is_err() {
                 return Err(Error::from_reason(result.unwrap_err()));
             }
         }
+
         if let Some(text_size_fixed) = options.text_size_fixed {
             emoji.set_text_size_fixed(text_size_fixed);
         }
+
         if let Some(disable_stretch) = options.disable_stretch {
             emoji.set_disable_stretch(disable_stretch);
         }
+
         if let Some(typeface_file) = options.typeface_file {
             emoji.set_typeface_file(typeface_file);
         }
+
         if let Some(typeface_name) = options.typeface_name {
             emoji.set_typeface_name(typeface_name);
         }
+
         if let Some(format) = options.format {
             let result = emoji.set_format_by_string(format);
             if result.is_err() {
                 return Err(Error::from_reason(result.unwrap_err()));
             }
         }
+        
         if let Some(quality) = options.quality {
             emoji.set_quality(quality);
         }
