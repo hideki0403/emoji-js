@@ -47,7 +47,7 @@ jobs:
             build: |-
               set -e &&
               apt-get update &&
-              apt-get install pkg-config libssl-dev libfontconfig1-dev libx11-dev libxcomposite-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libfreetype-dev -y &&
+              apt-get install pkg-config libssl-dev libfontconfig1-dev libx11-dev libxcomposite-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libfreetype6-dev -y &&
               pnpm build --target x86_64-unknown-linux-gnu &&
               strip *.node
 
