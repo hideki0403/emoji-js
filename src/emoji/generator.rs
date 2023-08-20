@@ -145,7 +145,7 @@ impl Generator {
         self.quality = quality;
     }
 
-    pub fn generate(&mut self) -> SkData {
+    pub fn generate(&mut self) -> Result<SkData, String> {
         let line_height = self.height / self.texts.len() as f32;
 
         // 行ボックスを作成
@@ -196,6 +196,11 @@ impl Generator {
 
         // エンコード
         let image = surface.image_snapshot();
-        return image.encode(None, self.format, self.quality).unwrap();
+        let data = image.encode(None, self.format, self.quality);
+        if data.is_none() {
+            return Err("Failed to encode image.".to_string());
+        }
+
+        return Ok(data.unwrap());
     }
 }

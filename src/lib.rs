@@ -92,5 +92,10 @@ pub fn generate(text: String, options: Option<EmojiOptions>) -> Result<Buffer, E
         }
     }
     
-    return Ok(Buffer::from(emoji.generate().as_bytes()));
+    let result = emoji.generate();
+    if result.is_err() {
+        return Err(Error::from_reason(result.unwrap_err()));
+    }
+    
+    return Ok(Buffer::from(result.unwrap().as_bytes()));
 }
