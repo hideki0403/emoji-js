@@ -20,7 +20,7 @@ pub struct EmojiOptions {
     pub disable_stretch: Option<bool>,
     pub typeface_file: Option<String>,
     pub typeface_name: Option<String>,
-    #[napi(ts_type = "'png' | 'jpeg' | 'webp' | 'gif'")]
+    #[napi(ts_type = "'png' | 'jpeg'")]
     pub format: Option<String>,
     pub quality: Option<u32>,
 }

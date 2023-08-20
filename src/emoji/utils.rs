@@ -45,8 +45,6 @@ pub fn parse_image_format(format: String) -> Result<SkEncodedImageFormat, String
     match format.as_str() {
         "png" => Ok(SkEncodedImageFormat::PNG),
         "jpeg" => Ok(SkEncodedImageFormat::JPEG),
-        "webp" => Ok(SkEncodedImageFormat::WEBP),
-        "gif" => Ok(SkEncodedImageFormat::GIF),
         _ => Err(format!("Invalid image format: {}", format)),
     }
 }

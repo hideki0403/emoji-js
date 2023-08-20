@@ -128,8 +128,12 @@ impl Generator {
         self.typeface = tf.unwrap();
     }
 
-    pub fn set_format(&mut self, format: SkEncodedImageFormat) {
+    pub fn set_format(&mut self, format: SkEncodedImageFormat) -> Result<(), String> {
+        if format != SkEncodedImageFormat::PNG && format != SkEncodedImageFormat::JPEG {
+            return Err(format!("Invalid image format: {:?}", format));
+        }
         self.format = format;
+        return Ok(());
     }
 
     pub fn set_format_by_string(&mut self, format: String) -> Result<(), String> {
