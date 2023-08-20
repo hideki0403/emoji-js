@@ -1,5 +1,5 @@
 {
-  "name": "emoji-gen-win32-x64-msvc",
+  "name": "@hideki0403/emoji.js-win32-x64-msvc",
   "version": "0.0.0",
   "os": [
     "win32"
@@ -7,9 +7,9 @@
   "cpu": [
     "x64"
   ],
-  "main": "emoji-gen.win32-x64-msvc.node",
+  "main": "emoji-js.win32-x64-msvc.node",
   "files": [
-    "emoji-gen.win32-x64-msvc.node"
+    "emoji-js.win32-x64-msvc.node"
   ],
   "license": "MIT",
   "engines": {

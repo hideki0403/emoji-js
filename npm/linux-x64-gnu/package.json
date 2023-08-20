@@ -1,5 +1,5 @@
 {
-  "name": "emoji-gen-linux-x64-gnu",
+  "name": "@hideki0403/emoji.js-linux-x64-gnu",
   "version": "0.0.0",
   "os": [
     "linux"
@@ -7,9 +7,9 @@
   "cpu": [
     "x64"
   ],
-  "main": "emoji-gen.linux-x64-gnu.node",
+  "main": "emoji-js.linux-x64-gnu.node",
   "files": [
-    "emoji-gen.linux-x64-gnu.node"
+    "emoji-js.linux-x64-gnu.node"
   ],
   "license": "MIT",
   "engines": {

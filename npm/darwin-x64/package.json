@@ -1,5 +1,5 @@
 {
-  "name": "emoji-gen-darwin-x64",
+  "name": "@hideki0403/emoji.js-darwin-x64",
   "version": "0.0.0",
   "os": [
     "darwin"
@@ -7,9 +7,9 @@
   "cpu": [
     "x64"
   ],
-  "main": "emoji-gen.darwin-x64.node",
+  "main": "emoji-js.darwin-x64.node",
   "files": [
-    "emoji-gen.darwin-x64.node"
+    "emoji-js.darwin-x64.node"
   ],
   "license": "MIT",
   "engines": {

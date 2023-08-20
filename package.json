@@ -1,5 +1,5 @@
 {
-  "name": "emoji-js",
+  "name": "@hideki0403/emoji.js",
   "version": "0.0.0",
   "main": "index.js",
   "types": "index.d.ts",
