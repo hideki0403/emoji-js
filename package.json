@@ -10,7 +10,13 @@
   "license": "MIT",
   "devDependencies": {
     "@napi-rs/cli": "^2.16.3",
-    "ava": "^5.1.1"
+    "@types/jest": "^29.5.3",
+    "@types/jest-image-snapshot": "^6.2.0",
+    "@types/node": "^20.5.1",
+    "jest": "^29.6.2",
+    "jest-image-snapshot": "^6.2.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.1.6"
   },
   "ava": {
     "timeout": "3m"
@@ -23,7 +29,7 @@
     "build": "napi build --platform --release",
     "build:debug": "napi build --platform",
     "prepublishOnly": "napi prepublish -t npm",
-    "test": "ava",
+    "test": "jest",
     "universal": "napi universal",
     "version": "napi version"
   }
