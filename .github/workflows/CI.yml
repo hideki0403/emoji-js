@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: |
           apt-get update
-          apt-get install curl glibc-source pkg-config libssl-dev libfontconfig1-dev libx11-dev libxcomposite-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libfreetype6-dev -y
+          apt-get install curl llvm-15 clang-15 lld-15 libc++-15-dev libc++abi-15-dev xz-utils rcs git make cmake ninja-build glibc-source pkg-config libssl-dev libfontconfig1-dev libx11-dev libxcomposite-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libfreetype6-dev -y
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
