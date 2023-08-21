@@ -46,11 +46,9 @@ jobs:
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
             build: |
               set -e
-              echo "Paths:"
-              echo $PATH
               apt-get update
               apt-get install glibc-source pkg-config libssl-dev libfontconfig1-dev libx11-dev libxcomposite-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libfreetype6-dev -y
-              ldconfig -p | grep -E "fontconfig|freetype"
+              PATH=$PATH:/lib/x86_64-linux-gnu
               pnpm build --target x86_64-unknown-linux-gnu
               strip *.node
 
