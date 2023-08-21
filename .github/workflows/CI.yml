@@ -52,6 +52,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install packages
+        if: ${{ matrix.settings.docker }}
+        shell: bash
+        run: |
+          apt-get update
+          apt-get install curl glibc-source pkg-config libssl-dev libfontconfig1-dev libx11-dev libxcomposite-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libfreetype6-dev -y
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
@@ -95,13 +102,6 @@ jobs:
         if: matrix.settings.target == 'i686-pc-windows-msvc'
         run: pnpm config set supportedArchitectures.cpu "ia32"
         shell: bash
-
-      - name: Install packages
-        if: ${{ matrix.settings.docker }}
-        shell: bash
-        run: |
-          apt-get update
-          apt-get install glibc-source pkg-config libssl-dev libfontconfig1-dev libx11-dev libxcomposite-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libfreetype6-dev -y
 
       - name: Install dependencies
         run: pnpm install
