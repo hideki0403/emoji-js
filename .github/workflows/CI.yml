@@ -27,6 +27,7 @@ jobs:
   build:
     name: stable - ${{ matrix.settings.target }} - node@18
     runs-on: ${{ matrix.settings.host }}
+    container: ${{ matrix.settings.docker }}
     strategy:
       fail-fast: false
       matrix:
@@ -43,12 +44,8 @@ jobs:
 
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
+            docker: debian:latest
             build: |
-              set -e
-              apt-get update
-              apt-get install glibc-source pkg-config libssl-dev libfontconfig1-dev libx11-dev libxcomposite-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libfreetype6-dev -y
-              PATH=$PATH:/lib/x86_64-linux-gnu
               pnpm build --target x86_64-unknown-linux-gnu
               strip *.node
 
@@ -62,7 +59,6 @@ jobs:
 
       - name: Setup node
         uses: actions/setup-node@v3
-        if: ${{ !matrix.settings.docker }}
         with:
           node-version: 18
           check-latest: true
@@ -70,7 +66,6 @@ jobs:
 
       - name: Install
         uses: dtolnay/rust-toolchain@stable
-        if: ${{ !matrix.settings.docker }}
         with:
           toolchain: stable
           targets: ${{ matrix.settings.target }}
@@ -101,6 +96,13 @@ jobs:
         run: pnpm config set supportedArchitectures.cpu "ia32"
         shell: bash
 
+      - name: Install packages
+        if: ${{ matrix.settings.docker }}
+        shell: bash
+        run: |
+          apt-get update
+          apt-get install glibc-source pkg-config libssl-dev libfontconfig1-dev libx11-dev libxcomposite-dev libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev libfreetype6-dev -y
+
       - name: Install dependencies
         run: pnpm install
 
@@ -123,7 +125,6 @@ jobs:
 
       - name: Build
         run: ${{ matrix.settings.build }}
-        if: ${{ !matrix.settings.docker }}
         shell: bash
 
       - name: Upload artifact
