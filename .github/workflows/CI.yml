@@ -170,6 +170,10 @@ jobs:
         with:
           path: .
 
+      - name: Move artifacts
+        run: mv js-files/* . && rm -rf js-files
+        shell: bash
+
       - name: List packages
         run: ls -R .
         shell: bash
@@ -201,16 +205,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Download artifacts (js)
-        uses: actions/download-artifact@v3
-        with:
-          name: js-files
-          path: .
-
-      - name: Download all artifacts (bindings)
+      - name: Download all artifacts
         uses: actions/download-artifact@v3
         with:
           path: artifacts
+
+      - name: Move js files
+        run: mv artifacts/js-files/* . && rm -rf artifacts/js-files
+        shell: bash
 
       - name: Move artifacts
         run: pnpm artifacts
