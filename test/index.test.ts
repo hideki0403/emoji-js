@@ -1,6 +1,29 @@
 import { generate } from '..'
 
 describe('basic test', () => {
+    // バイナリが返される
+    it('return binary', () => {
+        expect(generate('emoji')).toBeInstanceOf(Buffer)
+    })
+
+    // 間違った色を指定するとエラーになる
+    it('throw error when wrong color', () => {
+        expect(() => generate('emoji', { color: 'wrong color' })).toThrowError()
+    })
+
+    // 間違ったtextAlignを指定するとエラーになる
+    it('throw error when wrong textAlign', () => {
+        expect(() => generate('emoji', { textAlign: 'wrong textAlign' as any })).toThrowError()
+    })
+
+    // 間違ったフォーマットを指定するとエラーになる
+    it('throw error when wrong format', () => {
+        expect(() => generate('emoji', { format: 'wrong format' as any })).toThrowError()
+    })
+})
+
+// プラットフォームによってレンダリングされる画像に差があり、問題がない場合でもテストが失敗することがあるためにデフォルトでは実行しない
+describe.skip('binary test', () => {
     // 絵文字を生成できる
     it('generate emoji', () => {
         expect(generate('emoji')).toMatchImageSnapshot()
@@ -21,11 +44,6 @@ describe('basic test', () => {
         expect(generate('emoji', { backgroundColor: '#A3BE8C' })).toMatchImageSnapshot()
     })
 
-    // 間違った色を指定するとエラーになる
-    it('throw error when wrong color', () => {
-        expect(() => generate('emoji', { color: 'wrong color' })).toThrowError()
-    })
-
     // textSizeFixedを指定できる
     it('generate emoji with textSizeFixed', () => {
         expect(generate('emoji\ngen', { textSizeFixed: true })).toMatchImageSnapshot()
@@ -41,11 +59,6 @@ describe('basic test', () => {
         expect(generate('emo\nji', { textAlign: 'left', textSizeFixed: true })).toMatchImageSnapshot()
     })
 
-    // 間違ったtextAlignを指定するとエラーになる
-    it('throw error when wrong textAlign', () => {
-        expect(() => generate('emoji', { textAlign: 'wrong textAlign' as any })).toThrowError()
-    })
-
     // flexibleWidthを指定できる
     it('generate emoji with flexibleWidth', () => {
         expect(generate('emoji generator', { flexibleWidth: true })).toMatchImageSnapshot()
@@ -55,13 +68,9 @@ describe('basic test', () => {
     it('generate emoji with typefaceFile', () => {
         expect(generate('絵文字', { typefaceFile: 'test/assets/NotoSansJP-Regular.ttf' })).toMatchImageSnapshot()
     })
-
-    // 間違ったフォーマットを指定するとエラーになる
-    it('throw error when wrong format', () => {
-        expect(() => generate('emoji', { format: 'wrong format' as any })).toThrowError()
-    })
 })
 
+// 特定のプラットフォームでは実行できないテスト類
 describe.skip('advanced test', () => {
     // typefaceNameを指定できる (フォントがインストールされていない環境では失敗する)
     it('generate emoji with typefaceName', () => {
