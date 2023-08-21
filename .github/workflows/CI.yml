@@ -171,8 +171,10 @@ jobs:
           path: .
 
       - name: Move artifacts
-        run: mv js-files/* . && rm -rf js-files
         shell: bash
+        run: |
+          mv js-files/* . && rm -rf js-files
+          mv bindings-*/* . && rm -rf bindings-*
 
       - name: List packages
         run: ls -R .
