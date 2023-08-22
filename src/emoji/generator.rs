@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use super::utils;
 use super::line::Line;
 use std::fs::File;
