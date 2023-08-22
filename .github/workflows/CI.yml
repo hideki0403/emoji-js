@@ -25,13 +25,14 @@ on:
 
 jobs:
   build:
-    name: stable - ${{ matrix.settings.target }} - node@18
-    runs-on: ${{ matrix.settings.host }}
-    container: ${{ matrix.settings.docker }}
+    name: stable - ${{ matrix.runner.target }} - node@${{ matrix.node }}
+    runs-on: ${{ matrix.runner.host }}
+    container: ${{ matrix.runner.docker }}
     strategy:
       fail-fast: false
       matrix:
-        settings:
+        node: [20]
+        runner:
           - host: macos-latest
             target: x86_64-apple-darwin
             build: |
@@ -39,8 +40,8 @@ jobs:
               strip -x *.node
 
           - host: windows-latest
-            build: pnpm build
             target: x86_64-pc-windows-msvc
+            build: pnpm build
 
           - host: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -53,7 +54,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install packages
-        if: ${{ matrix.settings.docker }}
+        if: ${{ matrix.runner.docker }}
         shell: bash
         run: |
           apt-get update
@@ -67,7 +68,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: ${{ matrix.node }}
           check-latest: true
           cache: pnpm
 
@@ -75,7 +76,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-          targets: ${{ matrix.settings.target }}
+          targets: ${{ matrix.runner.target }}
 
       - name: Cache cargo
         uses: actions/cache@v3
@@ -86,20 +87,20 @@ jobs:
             ~/.cargo/git/db/
             .cargo-cache
             target/
-          key: ${{ matrix.settings.target }}-cargo-${{ matrix.settings.host }}
+          key: ${{ matrix.runner.target }}-cargo-${{ matrix.runner.host }}
 
       - uses: goto-bus-stop/setup-zig@v2
-        if: ${{ matrix.settings.target == 'armv7-unknown-linux-gnueabihf' }}
+        if: ${{ matrix.runner.target == 'armv7-unknown-linux-gnueabihf' }}
         with:
           version: 0.10.1
 
       - name: Setup toolchain
-        run: ${{ matrix.settings.setup }}
-        if: ${{ matrix.settings.setup }}
+        run: ${{ matrix.runner.setup }}
+        if: ${{ matrix.runner.setup }}
         shell: bash
 
       - name: Setup node x86
-        if: matrix.settings.target == 'i686-pc-windows-msvc'
+        if: matrix.runner.target == 'i686-pc-windows-msvc'
         run: pnpm config set supportedArchitectures.cpu "ia32"
         shell: bash
 
@@ -108,26 +109,26 @@ jobs:
 
       - name: Setup node x86
         uses: actions/setup-node@v3
-        if: matrix.settings.target == 'i686-pc-windows-msvc'
+        if: matrix.runner.target == 'i686-pc-windows-msvc'
         with:
-          node-version: 20
+          node-version: ${{ matrix.node }}
           check-latest: true
           cache: pnpm
           architecture: x86
 
       - name: Build
-        run: ${{ matrix.settings.build }}
+        run: ${{ matrix.runner.build }}
         shell: bash
 
       - name: Upload artifact (bindings)
         uses: actions/upload-artifact@v3
         with:
-          name: bindings-${{ matrix.settings.target }}
+          name: bindings-${{ matrix.runner.target }}
           path: ${{ env.APP_NAME }}.*.node
           if-no-files-found: error
   
       - name: Upload artifact (js)
-        if: ${{ matrix.settings.host == 'ubuntu-latest' }}
+        if: ${{ matrix.runner.host == 'ubuntu-latest' }}
         uses: actions/upload-artifact@v3
         with:
           name: js-files
