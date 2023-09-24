@@ -18,6 +18,9 @@ pub struct EmojiOptions {
     pub text_align: Option<String>,
     pub text_size_fixed: Option<bool>,
     pub disable_stretch: Option<bool>,
+    pub disable_outline: Option<bool>,
+    pub outline_width: Option<u32>,
+    pub outline_color: Option<String>,
     pub typeface_file: Option<String>,
     pub typeface_name: Option<String>,
     #[napi(ts_type = "'png' | 'jpeg'")]
@@ -70,6 +73,21 @@ pub fn generate(text: String, options: Option<EmojiOptions>) -> Result<Buffer, E
 
         if let Some(disable_stretch) = options.disable_stretch {
             emoji.set_disable_stretch(disable_stretch);
+        }
+
+        if let Some(disable_outline) = options.disable_outline {
+            emoji.set_disable_outline(disable_outline);
+        }
+
+        if let Some(outline_width) = options.outline_width {
+            emoji.set_outline_width(outline_width);
+        }
+
+        if let Some(outline_color) = options.outline_color {
+            let result = emoji.set_outline_color(outline_color);
+            if result.is_err() {
+                return Err(Error::from_reason(result.unwrap_err()));
+            }
         }
 
         if let Some(typeface_file) = options.typeface_file {

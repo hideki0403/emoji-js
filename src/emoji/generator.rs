@@ -23,6 +23,9 @@ pub struct Generator {
     text_align: SkTextAlign,
     text_size_fixed: bool,
     disable_stretch: bool,
+    disable_outline: bool,
+    outline_width: f32,
+    outline_color: SkColor,
     typeface: SkTypeface,
     format: SkEncodedImageFormat,
     quality: u32,
@@ -40,6 +43,9 @@ impl Generator {
             text_align: SkTextAlign::Center,
             text_size_fixed: false,
             disable_stretch: false,
+            disable_outline: false,
+            outline_width: 8.0,
+            outline_color: SkColor::WHITE,
             typeface: SkTypeface::default(),
             format: SkEncodedImageFormat::PNG,
             quality: 100,
@@ -99,6 +105,23 @@ impl Generator {
 
     pub fn set_disable_stretch(&mut self, disable_stretch: bool) {
         self.disable_stretch = disable_stretch;
+    }
+
+    pub fn set_disable_outline(&mut self, disable_outline: bool) {
+        self.disable_outline = disable_outline;
+    }
+
+    pub fn set_outline_width(&mut self, outline_width: u32) {
+        self.outline_width = outline_width as f32;
+    }
+
+    pub fn set_outline_color(&mut self, outline_color: String) -> Result<(), String> {
+        let result = utils::parse_color_code(outline_color);
+        if result.is_err() {
+            return Err(result.unwrap_err());
+        }
+        self.outline_color = result.unwrap();
+        return Ok(());
     }
 
     pub fn set_typeface_file(&mut self, path: String) {
@@ -165,6 +188,9 @@ impl Generator {
             line.set_text_align(self.text_align);
             line.set_color(self.color);
             line.set_disable_stretch(self.disable_stretch);
+            line.set_disable_outline(self.disable_outline);
+            line.set_outline_width(self.outline_width);
+            line.set_outline_color(self.outline_color);
 
             // 高さ・幅を計測
             line.measure(None);
@@ -191,7 +217,12 @@ impl Generator {
             }
         }
 
-        let mut surface = SkSurfaces::raster_n32_premul(ISize::new(self.width as i32, self.height as i32)).unwrap();
+        let surface_prepare = SkSurfaces::raster_n32_premul(ISize::new(self.width as i32, self.height as i32));
+        if surface_prepare.is_none() {
+            return Err("Failed to create surface.".to_string());
+        }
+
+        let mut surface = surface_prepare.unwrap();
         let mut canvas = surface.canvas();
         canvas.clear(self.background_color);
 

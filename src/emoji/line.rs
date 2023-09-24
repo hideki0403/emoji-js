@@ -10,6 +10,7 @@ use skia_safe::colors as SkColors;
 use skia_safe::TextEncoding as SkTextEncoding;
 use skia_safe::Canvas as SkCanvas;
 use skia_safe::utils::text_utils as SkTextUtils;
+use skia_safe::paint::Style as SkStyle;
 
 pub struct MeasureSpec {
     text_size: SkScalar,
@@ -36,6 +37,9 @@ pub struct Line {
     color: SkColor,
     disable_stretch: bool,
     spec: MeasureSpec,
+    disable_outline: bool,
+    outline_width: SkScalar,
+    outline_color: SkColor,
 }
 
 impl Line {
@@ -49,6 +53,9 @@ impl Line {
             color: SkColor::BLACK,
             disable_stretch: false,
             spec: MeasureSpec::new(),
+            disable_outline: false,
+            outline_width: 8.0,
+            outline_color: SkColors::WHITE.to_color(),
         }
     }
 
@@ -80,16 +87,30 @@ impl Line {
         self.disable_stretch = disable_stretch;
     }
 
+    pub fn set_disable_outline(&mut self, disable_outline: bool) {
+        self.disable_outline = disable_outline;
+    }
+
+    pub fn set_outline_width(&mut self, outline_width: SkScalar) {
+        self.outline_width = outline_width;
+    }
+
+    pub fn set_outline_color(&mut self, outline_color: SkColor) {
+        self.outline_color = outline_color;
+    }
+
     pub fn measure(&mut self, text_size: Option<SkScalar>) {
         if text_size.is_some() {
             self.measure_size_fixed(text_size.unwrap());
         } else {
             self.measure_adjusted();
         }
+
+
     }
 
     pub fn draw(&mut self, canvas: &mut SkCanvas, y: SkScalar) {
-        let paint = self.prepare_paint_for_draw();
+        let mut paint = self.prepare_paint_for_draw();
         let font = self.prepare_font_for_draw();
 
         // for X-axis
@@ -117,6 +138,22 @@ impl Line {
         // for Y-axis
         let offset_y = (self.line_height - self.spec.bounds.height()) / 2.0;
 
+        // outline
+        if !self.disable_outline {
+            // draw outline
+            let text_path = SkTextUtils::get_path(&self.text, Point::new(x, y - self.spec.bounds.top + offset_y), &font);
+            paint.set_style(SkStyle::Stroke);
+            paint.set_stroke_width(self.outline_width);
+            paint.set_color(self.outline_color);
+            canvas.draw_path(&text_path, &paint);
+
+            // reset style
+            paint.set_style(SkStyle::StrokeAndFill);
+            paint.set_stroke_width(0.0);
+        }
+
+        // text
+        paint.set_color(self.color);
         SkTextUtils::draw_str(canvas, &self.text, Point::new(x, y - self.spec.bounds.top + offset_y), &font, &paint, SkTextAlign::Left);
     }
 
@@ -160,11 +197,11 @@ impl Line {
                 font.set_size(i);
                 bounds = font.measure_text(self.text.as_bytes(), SkTextEncoding::UTF8, Some(&paint)).1;
 
-                if bounds.height() > self.line_height { break }
-                if self.disable_stretch && bounds.width() > self.width { break }
-
                 prev_text_size = i;
                 prev_bounds = bounds;
+
+                if bounds.height() > self.line_height { break }
+                if self.disable_stretch && bounds.width() > self.width { break }
 
                 i += 0.5;
             }
@@ -234,13 +271,18 @@ impl Line {
         let mut paint = SkPaint::default();
         paint.set_anti_alias(true);
         paint.set_color4f(SkColors::BLACK, None);
+
+        if !self.disable_outline {
+            paint.set_style(SkStyle::StrokeAndFill);
+            paint.set_stroke_width(self.outline_width);
+        }
+
         return paint;
     }
 
     pub fn prepare_paint_for_draw(&self) -> SkPaint {
         let mut paint = SkPaint::default();
         paint.set_anti_alias(true);
-        paint.set_color(self.color);
         return paint;
     }
 
