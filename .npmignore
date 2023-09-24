@@ -1,5 +1,9 @@
+.vscode
+src
 target
 Cargo.lock
+Cargo.toml
+build.rs
 .cargo
 .github
 npm
@@ -12,3 +16,5 @@ yarn.lock
 __test__
 test
 renovate.json
+jest.config.js
+tsconfig.json
