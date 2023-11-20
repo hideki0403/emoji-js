@@ -108,7 +108,7 @@ The typeface name of the font.
   
 #### `format`
   
-Default: `png`
+Default: `png`  
 Enum: `png`, `jpeg`
   
 The format of the generated image.  
